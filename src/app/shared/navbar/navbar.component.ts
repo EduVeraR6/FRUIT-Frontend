@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,15 +11,17 @@ import { ROUTE_NAMES_EN, ROUTE_NAMES_ES } from '../../../helpers/routes_names';
 import { AuthService } from '../../auth/services/AuthService.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { StorageService } from '../storage.service';
+import { CommonModule } from '@angular/common';
+import { GameDataParamsService } from '../../game/params/game-data-params.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterModule, MatToolbarModule, MatIconModule, HttpClientModule, TranslateModule],
+  imports: [RouterModule, MatToolbarModule, MatIconModule, HttpClientModule, TranslateModule, CommonModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   isMobile: boolean = false;
   currentRouteName: string = '';
   fullName: string = '';
@@ -28,6 +30,13 @@ export class NavbarComponent {
   name : string = '';
   lastName :string = '';
 
+  showMenu = false;
+  isLanguageMenuOpen = false;
+  selectedLanguage: string = 'es'; // Idioma por defecto
+
+
+
+
   @Output() toggleSidenav = new EventEmitter<void>();
 
   constructor(
@@ -35,12 +44,32 @@ export class NavbarComponent {
     private authService: AuthService,
     private questionService: QuestionsService, 
     private router: Router,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private gameDataParamsService: GameDataParamsService,
   ) {
     
 
   }
+  toggleMenuOpciones() {
+    this.showMenu = !this.showMenu;
+    if (!this.showMenu) {
+      this.isLanguageMenuOpen = false; 
+    }
+  }
+  
+  toggleLanguageMenu() {
+    this.isLanguageMenuOpen = !this.isLanguageMenuOpen;
+  }
+  
+  changeLanguage(lang: string) {
+    this.translate.use(lang);
+    this.selectedLanguage = lang;
+    this.storageService.setItem(lang); 
+    this.isLanguageMenuOpen = false;
+    this.showMenu = false;
+  }
 
+  
   toggleMenu() {
     this.toggleSidenav.emit();
   }
@@ -50,6 +79,10 @@ export class NavbarComponent {
   }
 
   ngOnInit(): void {
+    this.selectedLanguage = this.storageService.getItem() || 'es'; // o el idioma por defecto
+
+
+
     const language = this.storageService.getItem();
     if (language) {
       this.translate.setDefaultLang(language);
@@ -113,4 +146,14 @@ export class NavbarComponent {
   getPhotoUser():string {
     return 'https://ui-avatars.com/api/?name=' + this.authService.getUserData()?.user.name + '+' + this.authService.getUserData()?.user.last_name + '&background=0D92F4&color=FFFFFF';
   }
+
+  logout(): void {
+    this.authService.logout();
+    this.gameDataParamsService.removeGameRoomIdLocalStorage();
+    this.gameDataParamsService.clearGameDataLocalStorage();
+    this.gameDataParamsService.removeGameRoomOptionLocalStorage();
+    this.gameDataParamsService.clearGameDataPractice();
+  }
+
+
 }
