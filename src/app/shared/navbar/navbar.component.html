@@ -59,7 +59,7 @@
             class="w-full text-sm font-medium text-left text-blue-500 px-4 py-2 hover:bg-gray-100 flex items-center gap-2"
           >
             <span class="material-icons text-base">translate</span>
-            Cambiar idioma
+            {{ "NAVBAR.CHANGE_LANGUAGE" | translate }}
             <span class="material-icons ml-auto text-xs">
               {{ isLanguageMenuOpen ? "expand_less" : "expand_more" }}
             </span>
@@ -74,7 +74,7 @@
               "
               class="w-full text-left text-sm py-2 hover:bg-gray-100 rounded-md"
             >
-              Español
+            {{ "NAVBAR.SPANISH" | translate }}
             </button>
 
             <button
@@ -84,7 +84,7 @@
               "
               class="w-full text-left text-sm py-2 hover:bg-gray-100 rounded-md"
             >
-              English
+            {{ "NAVBAR.ENGLISH" | translate }}
             </button>
           </div>
         </div>
@@ -97,7 +97,7 @@
           <span class="material-icons text-base transition-colors duration-200"
             >logout</span
           >
-          Cerrar sesión
+          {{ "NAVBAR.LOGOUT" | translate }}
         </button>
       </div>
     </div>

@@ -61,7 +61,11 @@
     "LOGIN": "Log in here"
   },
   "NAVBAR": {
-    "HELLO": "Hi"
+    "HELLO": "Hi",
+    "LOGOUT": "Logout",
+    "ENGLISH": "English",
+    "SPANISH": "Spanish",
+    "CHANGE_LANGUAGE": "Change language"
   },
   "SIDEBAR": {
     "HOME": "Home",
