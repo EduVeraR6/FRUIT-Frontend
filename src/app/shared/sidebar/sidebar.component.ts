@@ -91,13 +91,6 @@ export class SidebarComponent implements OnInit {
   //   }
   // }
 
-  logout(): void {
-    this.authService.logout();
-    this.gameDataParamsService.removeGameRoomIdLocalStorage();
-    this.gameDataParamsService.clearGameDataLocalStorage();
-    this.gameDataParamsService.removeGameRoomOptionLocalStorage();
-    this.gameDataParamsService.clearGameDataPractice();
-  }
 
   isRouteActive(): boolean {
     const rutasActivas = ['/game', '/quiz-game'];
