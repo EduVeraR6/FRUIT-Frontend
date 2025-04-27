@@ -61,7 +61,11 @@
     "LOGIN": "Inicia sesión aquí"
   },
   "NAVBAR": {
-    "HELLO": "Hola"
+    "HELLO": "Hola",
+    "LOGOUT" : "Cerrar Sesión",
+    "ENGLISH": "Inglés",
+    "SPANISH": "Español",
+    "CHANGE_LANGUAGE": "Cambiar Idioma"
   },
   "SIDEBAR": {
     "HOME": "Inicio",
