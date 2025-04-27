@@ -36,4 +36,9 @@ export default class ResultsComponent implements OnInit {
   toggleCard(index: number): void {
     this.expandedIndex = this.expandedIndex === index ? null : index;
   }
+
+  goToCreateGraph() {
+    this.router.navigate(['/game-graph']); // Asegúrate que la ruta esté correcta
+  }
+
 }

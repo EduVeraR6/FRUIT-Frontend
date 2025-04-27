@@ -1,0 +1,37 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div class="bg-white p-5 rounded-lg shadow-lg w-4/5 max-w-sm">
+      <h3 class="text-lg font-semibold">Personalizar escala</h3>
+  
+      <div class="mt-4">
+        <label for="xAxisLimitModal" class="block">Límite eje X:</label>
+        <input type="number" id="xAxisLimitModal" [(ngModel)]="xAxisLimit" required [min]="minXLimit" 
+          #xAxisLimitInput="ngModel" class="border border-gray-300 p-2 rounded w-20 mt-1">
+        <div *ngIf="xAxisLimitInput.invalid && (xAxisLimitInput.dirty || xAxisLimitInput.touched)">
+          <div *ngIf="xAxisLimitInput.errors?.['required']" class="text-red-500 text-xs mt-1">El límite del eje X es requerido.</div>
+          <div *ngIf="xAxisLimitInput.errors?.['min']" class="text-red-500 text-xs mt-1">Debe ser mayor o igual a {{ minXLimit }}.</div>
+        </div>
+      </div>
+  
+      <div class="mt-4">
+        <label for="yAxisStepModal" class="block">Salto eje Y (min 0.1, max 0.5):</label>
+        <input type="number" id="yAxisStepModal" [(ngModel)]="yAxisStep" required min="0.1" max="0.5" step="0.1" 
+          #yAxisStepInput="ngModel" class="border border-gray-300 p-2 rounded w-20 mt-1">
+        <div *ngIf="yAxisStepInput.invalid && (yAxisStepInput.dirty || yAxisStepInput.touched)">
+          <div *ngIf="yAxisStepInput.errors?.['required']" class="text-red-500 text-xs mt-1">El salto del eje Y es requerido.</div>
+          <div *ngIf="yAxisStepInput.errors?.['min']" class="text-red-500 text-xs mt-1">Debe ser mayor o igual a 0.1.</div>
+          <div *ngIf="yAxisStepInput.errors?.['max']" class="text-red-500 text-xs mt-1">Debe ser menor o igual a 0.5.</div>
+        </div>
+      </div>
+  
+      <div class="mt-5 text-right">
+        <button (click)="applyScale()" [disabled]="!xAxisLimitInput.valid || !yAxisStepInput.valid" 
+          class="px-4 py-2 border border-gray-300 rounded bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-300">
+          Aplicar
+        </button>
+        <button (click)="closeModal()" class="px-4 py-2 border border-gray-300 rounded ml-2 hover:bg-gray-200">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+  

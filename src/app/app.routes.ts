@@ -56,6 +56,11 @@ export const routes: Routes = [
         loadComponent: () => import('./results/results.component'),
         canActivate: [AuthGuard, roleStudentGuard],
       },
+      {
+        path: 'game-graph',
+        loadComponent: () => import('./game-graph/game-graph.component').then(m => m.GameGraphComponent),
+        canActivate: [AuthGuard, roleStudentGuard],
+      },      
       { path: 'game-history', 
         loadComponent: () => import('./game-history/game-history.component'),
         canActivate: [AuthGuard, roleStudentGuard],

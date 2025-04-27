@@ -1,0 +1,55 @@
+<h5 class="text-xl font-semibold text-center mb-7 text-gray-700">GRÁFICA DE CONJUNTOS DIFUSOS DE LAS VARIABLES LINGÜÍSTICAS</h5>    
+
+<div class="max-w-4xl mx-auto my-7 p-6 bg-white shadow-lg rounded-lg">
+
+  <div class="flex flex-col sm:flex-row justify-start gap-7 items-center mb-6">
+    <label for="linguisticVariable" class="text-sm font-medium text-gray-600 w-40 mr-2">Variable lingüística:</label>
+
+    <!-- Cambio de input a select con estilos mejorados -->
+    <select id="linguisticVariable" [(ngModel)]="linguisticVariable" class="p-2 border border-gray-300 rounded-lg shadow-sm w-full sm:w-3/12 text-gray-700 focus:ring-2 focus:ring-blue-500 transition">
+      <option value="" disabled selected>Seleccione</option> <!-- Opción por defecto -->
+      <option *ngFor="let variable of linguisticVariables" [value]="variable">{{ variable }}</option>
+    </select>
+
+    <button [disabled]="!isLinguisticVariableValid()" (click)="openAddValueModal()" class="mt-4 sm:mt-0 sm:ml-2 py-2 px-5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+      Agregar valor
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+    <div *ngFor="let func of chartData.functions; let i = index" class="flex items-center justify-between p-4 bg-white rounded-lg shadow-md hover:shadow-xl transition">
+      <span class="text-gray-800">{{ func.linguisticValue }}</span>
+      <button class="p-0 ml-2 bg-transparent border-none cursor-pointer hover:text-blue-500" (click)="openEditValueModal(func)" title="Editar valor">
+        <!-- Icono de editar usando Material Icons -->
+        <span class="material-icons text-blue-500">edit</span>
+      </button>
+    </div>
+
+    <div *ngIf="chartData.functions.length === 0" class="col-span-full text-center text-sm italic text-gray-500">
+      No se han agregado valores lingüísticos.
+    </div>
+  </div>
+
+  <app-line-chart [chartData]="chartData" [linguisticVariable]="linguisticVariable"></app-line-chart>
+
+  <div class="text-right mt-6">
+    <button (click)="openScaleModal()" class="py-2 px-5 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition">
+      Personalizar escala
+    </button>
+  </div>
+
+  <div *ngIf="showAddValueModal">
+    <app-add-value-modal (close)="closeAddValueModal()" (valueAdded)="onValueAdded($event)"></app-add-value-modal>
+  </div>
+
+  <div *ngIf="showEditValueModal">
+    <app-add-value-modal [editingValue]="editingValue" (close)="closeEditValueModal()" (valueAdded)="onValueEdited($event)"></app-add-value-modal>
+  </div>
+
+  <div *ngIf="showScaleModal">
+    <app-scale-modal [initialXLimit]="currentXAxisLimit" [initialYStep]="currentYAxisStep"
+      [maxXFromFunctions]="maxXFromFunctions" (scaleApplied)="onScaleApplied($event)" (close)="closeScaleModal()">
+    </app-scale-modal>
+  </div>
+
+</div>

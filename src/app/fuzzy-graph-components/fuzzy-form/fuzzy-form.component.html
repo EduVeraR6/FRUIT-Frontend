@@ -1,0 +1,74 @@
+<div class="container">
+    <h2>Parametrización de Funciones de Pertenencia</h2>
+    <form (ngSubmit)="onSubmit()" #fuzzyForm="ngForm">
+        <div *ngFor="let item of formItems; let i = index">
+            <h3>Función de Pertenencia {{ i + 1 }}</h3>
+            <div>
+                <label for="linguisticValue_{{ i }}">Seleccionar valor lingüístico:</label>
+                <select id="linguisticValue_{{ i }}" name="linguisticValue_{{ i }}" [(ngModel)]="item.linguisticValue"
+                    required>
+                    <option value="valorA">Valor A</option>
+                    <option value="valorB">Valor B</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="functionType_{{ i }}">Seleccionar función:</label>
+                <select id="functionType_{{ i }}" name="functionType_{{ i }}" [(ngModel)]="item.functionType" required
+                    (change)="onFunctionChange(item)">
+                    <option value="trapezoidal">Trapezoidal</option>
+                    <option value="triangular">Triangular</option>
+                </select>
+            </div>
+
+            <div *ngIf="item.functionType === 'trapezoidal'">
+                <h4>Definir puntos Trapezoidal</h4>
+                <label for="pointA_x_{{ i }}">A (x, 0):</label>
+                <input type="number" id="pointA_x_{{ i }}" name="pointA_x_{{ i }}" [(ngModel)]="item.pointA_x" required>
+                <br>
+                <label for="pointB_x_{{ i }}">B (x, 1):</label>
+                <input type="number" id="pointB_x_{{ i }}" name="pointB_x_{{ i }}" [(ngModel)]="item.pointB_x" required>
+                <br>
+                <label for="pointC_x_{{ i }}">C (x, 1):</label>
+                <input type="number" id="pointC_x_{{ i }}" name="pointC_x_{{ i }}" [(ngModel)]="item.pointC_x" required>
+                <br>
+                <label for="pointD_x_{{ i }}">D (x, 0):</label>
+                <input type="number" id="pointD_x_{{ i }}" name="pointD_x_{{ i }}" [(ngModel)]="item.pointD_x" required>
+            </div>
+
+            <div *ngIf="item.functionType === 'triangular'">
+                <h4>Definir puntos Triangular</h4>
+                <label for="pointA_t_x_{{ i }}">A (x, 0):</label>
+                <input type="number" id="pointA_t_x_{{ i }}" name="pointA_t_x_{{ i }}" [(ngModel)]="item.pointA_t_x"
+                    required>
+                <br>
+                <label for="pointB_t_x_{{ i }}">B (x, 1):</label>
+                <input type="number" id="pointB_t_x_{{ i }}" name="pointB_t_x_{{ i }}" [(ngModel)]="item.pointB_t_x"
+                    required>
+                <br>
+                <label for="pointC_t_x_{{ i }}">C (x, 0):</label>
+                <input type="number" id="pointC_t_x_{{ i }}" name="pointC_t_x_{{ i }}" [(ngModel)]="item.pointC_t_x"
+                    required>
+            </div>
+
+            <button type="button" *ngIf="formItems.length > 1" (click)="removeFormItem(i)">Eliminar Función</button>
+            <hr>
+        </div>
+
+        <div>
+            <button type="button" (click)="addFormItem()">Agregar otra función</button>
+        </div>
+
+        <div>
+            <h3>Personalizar escala</h3>
+            <label for="xAxisLimit">Definir límite eje X:</label>
+            <input type="number" id="xAxisLimit" name="xAxisLimit" [(ngModel)]="xAxisLimit" required>
+            <br>
+            <label for="yAxisStep">Definir salto eje Y (min 0.1, max 0.5):</label>
+            <input type="number" id="yAxisStep" name="yAxisStep" [(ngModel)]="yAxisStep" min="0.1" max="0.5" step="0.1"
+                required>
+        </div>
+
+        <button type="submit" [disabled]="!fuzzyForm.form.valid">Generar Gráfica</button>
+    </form>
+</div>
