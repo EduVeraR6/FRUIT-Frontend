@@ -94,5 +94,18 @@
             
         </div>
     </div>
+    
+    <!-- Botones de navegación -->
+    <div class="navigation-buttons flex justify-center items-center mt-6 space-x-4">
+        <button (click)="backHome()"
+            class="bg-[#4A90E2] text-white px-4 py-2 rounded-lg shadow-md disabled:opacity-50">
+            {{'BUTTON_NAVIGATION_TABLE.PREVIOUS' | translate}}
+        </button>
+        <button (click)="goGrafic()"
+            class="bg-[#4A90E2] text-white px-4 py-2 rounded-lg shadow-md disabled:opacity-50">
+            {{'BUTTON_NAVIGATION_TABLE.NEXT' | translate}}
+        </button>
+    </div>
+
 </div>
 

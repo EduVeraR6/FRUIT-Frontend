@@ -353,9 +353,9 @@ export default class QuestionsComponent implements OnInit {
 
   isDraggingBlocked: boolean = false;
 
-blockDragging(): void {
-  this.isDraggingBlocked = true;
-}
+  blockDragging(): void {
+    this.isDraggingBlocked = true;
+  }
 
   resetTimer(): void {
     this.timer = 0;

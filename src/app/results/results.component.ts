@@ -36,4 +36,13 @@ export default class ResultsComponent implements OnInit {
   toggleCard(index: number): void {
     this.expandedIndex = this.expandedIndex === index ? null : index;
   }
+
+  backHome(): void {
+    this.router.navigate(['/home']);
+  }
+
+  goGrafic(): void {
+    this.router.navigate(['/grafic']);
+  }
+
 }
