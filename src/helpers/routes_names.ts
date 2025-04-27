@@ -4,6 +4,7 @@ export const ROUTE_NAMES_ES = {
     '/game-history': 'Historial de Juegos',
     '/quiz-game': 'Juego',
     '/results': 'Resultados',
+    '/grafic': 'Gráfica',
     '/users': 'Usuarios',
     '/game-rooms': 'Salas de Juego',
     '/report': 'Reporte',

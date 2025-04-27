@@ -1,6 +1,6 @@
-<div class="container mx-auto">
-    <div class="flex items-center mb-4">
-        <label for="linguisticVariable" class="w-40 text-left mr-2">Variable lingüística:</label>
+<div class="bg-white rounded-md p-4 container mx-auto">
+    <div class="bg-white rounded-md p-4 flex items-center mb-4">
+        <label for="linguisticVariable" class="w-60 text-left">Variable lingüística</label>
         <select id="linguisticVariable" [(ngModel)]="selectedLinguisticVariable"
             class="w-full bg-gray-50 p-3 rounded-xl outline-none border shadow-sm text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D92F4] focus:border-transparent"
             (change)="onLinguisticVariableChange()" required>
@@ -12,22 +12,21 @@
         </button>
     </div>
 
-    <div class="bg-white rounded-md p-4 mb-4">
+    <div class="bg-gray-50 rounded-md p-4 mb-4">
+        <div class="col-span-full mb-1">
+            Valores lingüísticos
+        </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
             <div *ngFor="let func of chartData.functions; let i = index"
-                class="flex items-center justify-between border rounded p-2 bg-white">
+                class="flex items-center justify-between border rounded-xl p-2 bg-white">
                 <span class="text-gray-700">{{ func.linguisticValue }}</span>
                 <button
-                    class="bg-gray-200 hover:bg-gray-300 text-blue-800 font-semibold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                    class="text-blue-800 font-semibold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
                     (click)="openEditValueModal(func)">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                        class="w-5 h-5 fill-current">
-                        <path
-                            d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-12.151 12.15a5.25 5.25 0 0 0-1.329 2.24l-1.027 3.508a1.125 1.125 0 0 1-1.362 1.361L3 21.292a1.125 1.125 0 0 1-1.362-1.362l3.508-1.027a5.25 5.25 0 0 0 2.24-1.329L19.513 8.199Z" />
-                    </svg>
+                    <span class="material-icons text-blue-500">edit</span>
                 </button>
             </div>
-            <div *ngIf="chartData.functions.length === 0" class="text-gray-500 italic col-span-full">
+            <div *ngIf="chartData.functions.length === 0" class="text-gray-400 italic col-span-full">
                 No se han agregado valores lingüísticos.
             </div>
         </div>
