@@ -212,7 +212,7 @@ export default class QuestionsComponent implements OnInit {
 
     const body: BodyResultsQuestions = {
       game_room_id: Number(
-        this.gameDataParamsService.getGameRoomIdLocalStorage()
+        this.gameDataParamsService.getGameRoomIdLocalStorage() //ID DEL ROOM
       ),
       duration: this.formatTime(this.timer),
       answers: this.completedAnswers.map((answer) => ({

@@ -6,6 +6,10 @@ import { PersonalizeScaleComponent } from "./personalize-scale/personalize-scale
 import { LineChartComponent } from "./line-chart/line-chart.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartDataInput } from './interfaces/ChartDataInput';
+import { GameDataParamsService } from '../game/params/game-data-params.service';
+import { ResultsQuestionsResponse } from '../results/interfaces/ResultsQuestionsResponse';
+import { GraficService } from './services/GraficService.service';
+import { AuthService } from '../auth/services/AuthService.service';
 
 @Component({
   selector: 'app-grafic',
@@ -39,13 +43,61 @@ export default class GraficComponent {
     COMPRENSION: ['facil', 'dificil']
   };
   currentVariableValues: string[] = [];
+  //Data quemada
   linguisticVariables: string[] = ['TRANSACCIONES', 'NUMERO DE ERRORES', 'COMPRENSION'];
 
-  constructor(private cdr: ChangeDetectorRef) {
+  //RESULTADOS DATA
+  resultData: ResultsQuestionsResponse | null = null;
+
+
+
+
+
+  constructor(private gameDataService: GameDataParamsService, private authService :  AuthService , private cdr: ChangeDetectorRef , private graficChartService: GraficService) {
     this.updateXAxisLimit();
   }
 
+  newGraphicData = {
+    user_id: 10., // Este es un ejemplo, lo obtienes desde donde lo necesites
+    game_room_id: 49,
+    variable_linguistica: 'Transacciones',
+    escala: '5',
+    data: { prueba: 'Prueba' }
+  };
+
+
   ngOnInit(): void {    
+
+
+
+    this.graficChartService.getGraphics().subscribe(
+      (response) => {
+
+        console.log('Gráficos obtenidos:', response.data);
+      },
+      (error) => {
+        console.error('Error al obtener gráficos:', error.message);
+      }
+    );
+
+    this.graficChartService.getGraphicsPorSala().subscribe(
+      (response) => {
+
+        console.log('Gráficos obtenidos:', response.data);
+      },
+      (error) => {
+        console.error('Error al obtener gráficos:', error.message);
+      }
+    );
+
+  
+    const result = this.gameDataService.getGameResult();
+
+    if (result && result.data) {
+      this.resultData = result.data;
+      console.log('RESULTADOS', this.resultData);
+    } 
+
     this.selectedLinguisticVariable = this.linguisticVariables[0] || '';    
   }
 
