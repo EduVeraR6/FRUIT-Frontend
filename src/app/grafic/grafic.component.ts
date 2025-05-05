@@ -9,7 +9,9 @@ import { ChartDataInput } from './interfaces/ChartDataInput';
 import { GameDataParamsService } from '../game/params/game-data-params.service';
 import { ResultsQuestionsResponse } from '../results/interfaces/ResultsQuestionsResponse';
 import { GraficService } from './services/GraficService.service';
-import { AuthService } from '../auth/services/AuthService.service';
+import { GraficChartGameModel } from './interfaces/ApiResponse';
+import { Router } from '@angular/router';
+import { AlertService } from '../shared/alert.service';
 
 @Component({
   selector: 'app-grafic',
@@ -31,101 +33,141 @@ export default class GraficComponent {
   initialXLimit: number = 1;
   initialYStep: number = 0.5;
   chartData: ChartDataInput = {
-    functions: [],
+    linguisticVariable: '',
+    linguisticValues: [],
     xAxisLimit: this.currentXAxisLimit,
     yAxisStep: this.currentYAxisStep
   };
   editingValue: any = null;
   maxXFromFunctions: number = 0;
-  variableValues = {
-    TRANSACCIONES: ['muchas', 'normales', 'pocas'],
-    'NUMERO DE ERRORES': ['muchos', 'pocos'],
-    COMPRENSION: ['facil', 'dificil']
-  };
+  game_room_id = 48;
+  question_id = 1;
+  rnf_desc = '';
+  
   currentVariableValues: string[] = [];
-  //Data quemada
-  linguisticVariables: string[] = ['TRANSACCIONES', 'NUMERO DE ERRORES', 'COMPRENSION'];
-
+  
   //RESULTADOS DATA
   resultData: ResultsQuestionsResponse | null = null;
 
-
-
-
-
-  constructor(private gameDataService: GameDataParamsService, private authService :  AuthService , private cdr: ChangeDetectorRef , private graficChartService: GraficService) {
+  constructor(
+      private alertService: AlertService, private gameDataService: GameDataParamsService, private cdr: ChangeDetectorRef , private graficChartService: GraficService, private router: Router) {
     this.updateXAxisLimit();
   }
-
-  newGraphicData = {
-    user_id: 10., // Este es un ejemplo, lo obtienes desde donde lo necesites
-    game_room_id: 49,
-    variable_linguistica: 'Transacciones',
-    escala: '5',
-    data: { prueba: 'Prueba' }
-  };
 
 
   ngOnInit(): void {    
 
+    this.game_room_id = Number(this.gameDataService.getGameRoomIdLocalStorage()) ?? 0;
+    this.question_id = Number(this.gameDataService.getQuestionIDLocalStorage()) ?? 0;
 
+    const questions = this.gameDataService.getQuestionsGameLocalStorage();
+    const rnf = questions?.find((question: any) => question.id === this.question_id);
 
-    this.graficChartService.getGraphics().subscribe(
-      (response) => {
+    if (this.game_room_id === 0 || this.question_id === 0 || !rnf) {
 
-        console.log('Gráficos obtenidos:', response.data);
-      },
-      (error) => {
-        console.error('Error al obtener gráficos:', error.message);
-      }
-    );
+      this.gameDataService.removeGameRoomIdLocalStorage();
+      this.gameDataService.clearQuestionIDLocalStorage();
+      this.gameDataService.clearQuestionsGameLocalStorage();
+      this.gameDataService.clearGameResultLocalStorage();
 
-    this.graficChartService.getGraphicsPorSala().subscribe(
-      (response) => {
-
-        console.log('Gráficos obtenidos:', response.data);
-      },
-      (error) => {
-        console.error('Error al obtener gráficos:', error.message);
-      }
-    );
-
-  
-    const result = this.gameDataService.getGameResult();
-
-    if (result && result.data) {
-      this.resultData = result.data;
-      console.log('RESULTADOS', this.resultData);
-    } 
-
-    this.selectedLinguisticVariable = this.linguisticVariables[0] || '';    
-  }
-
-  areNewValuesAvailable(): boolean {
-    if (!this.selectedLinguisticVariable) {
-      return false;
+      this.router.navigate(['/game'], {
+        queryParams: { mode: 'find' }, 
+      });
     }
-    const usedValues = this.chartData.functions.map(func => func.linguisticValue);
-    const availableValues = this.variableValues[this.selectedLinguisticVariable as keyof typeof this.variableValues] || [];
-    return availableValues.some(value => !usedValues.includes(value));
+
+    this.rnf_desc = rnf?.nfr || '';
+    this.selectedLinguisticVariable = rnf?.variable || '';
+    this.currentVariableValues = [rnf.value, rnf.recomend];
+    this.chartData.linguisticVariable = this.selectedLinguisticVariable;
+
+    /*
+
+    ***** EDITAR
+
+    // SE CONSUME EL SERVICIO PARA OBTENER LA GRAFICA QUE LA PREGUNTA
+
+    this.graficChartService.getGraficByRoomAndQuestionAndUser(this.game_room_id, this.question_id).subscribe(
+      (response) => {
+
+        console.log('Gráfica:', response.data[0]);
+        this.chartData = response.data[0].data;
+        this.selectedLinguisticVariable = this.chartData.linguisticVariable;    
+
+      },
+      (error) => {
+        console.error('Error al obtener gráficos:', error.message);
+      }
+    );
+    */
   }
 
-  onLinguisticVariableChange() {
-    this.currentVariableValues = this.variableValues[this.selectedLinguisticVariable as keyof typeof this.variableValues] || [];
+
+  backResults(): void {
+
+    if (this.chartData.linguisticValues.length > 0) {
+
+      const continuar = confirm('La grafica no se ha guardado. ¿Desea continuar?');
+      if (!continuar) {
+        return;
+      }      
+    }
+
+    this.router.navigate(['/results']);
   }
+
+
+  saveGrafic() {
+
+    if (this.chartData.linguisticValues.length !== 2) {
+      this.alertService.showAlert(
+        'Faltan valores linguísticos por graficar.',
+        true
+      );
+      return;
+    }
+
+    const dataToSave: GraficChartGameModel = {
+      game_room_id: this.game_room_id,
+      question_id: this.question_id,
+      data: this.chartData
+    };
+    
+    this.graficChartService.createGraphics(dataToSave).subscribe(
+      () => {
+        this.alertService.showAlert(
+          'Gráfica guardada correctamente.',
+          false
+        );
+        this.router.navigate(['/results']);
+      },
+      (error) => {
+        console.error('Error al guardar la gráfica:', error.message);
+      }
+    );
+  }
+
+
+  areNewValuesAvailable(): boolean {  
+    this.currentVariableValues = this.currentVariableValues.filter((value) => {
+      return !this.chartData.linguisticValues.some((lv) => lv.nameValue === value);
+    });
+    return this.currentVariableValues.length > 0;
+  }
+
 
   closeAddValueModal() {
     this.showAddValueModal = false;
   }
   
+
   openAddValueModal() {
-    this.editingValue = null;
-    const usedValues = this.chartData.functions.map(func => func.linguisticValue);
-    this.currentVariableValues = this.variableValues[this.selectedLinguisticVariable as keyof typeof this.variableValues]?.filter(
-      value => !usedValues.includes(value)
-    ) || [];
-    this.showAddValueModal = true;
+    this.editingValue = null;    
+    this.showAddValueModal = true;  
+    this.currentVariableValues = this.currentVariableValues.filter((value) => {
+      return !this.chartData.linguisticValues.some((lv) => lv.nameValue === value);
+    });
   }
+
 
   openEditValueModal(value: any) {
     if (value) {
@@ -140,15 +182,17 @@ export default class GraficComponent {
     this.showEditValueModal = true;
   }
 
+
   closeEditValueModal() {
     this.showEditValueModal = false;
     this.editingValue = null;
   }
 
+
   onValueAdded(newValue: any) {
     this.chartData = {
       ...this.chartData,
-      functions: [...this.chartData.functions, newValue]
+      linguisticValues: [...this.chartData.linguisticValues, newValue]
     };
     this.updateXAxisLimit();
     this.currentXAxisLimit = Math.max(this.currentXAxisLimit, this.initialXLimit);
@@ -156,13 +200,13 @@ export default class GraficComponent {
   }
 
   onValueEdited(editedValue: any) {
-    const index = this.chartData.functions.findIndex(
-      (func) => func.linguisticValue === editedValue.linguisticValue
+    const index = this.chartData.linguisticValues.findIndex(
+      (lv) => lv.nameValue === editedValue.nameValue
     );
     if (index !== -1) {
-      const updatedFunctions = [...this.chartData.functions];
+      const updatedFunctions = [...this.chartData.linguisticValues];
       updatedFunctions[index] = { ...editedValue };
-      this.chartData = { ...this.chartData, functions: updatedFunctions };
+      this.chartData = { ...this.chartData, linguisticValues: updatedFunctions };
       this.updateXAxisLimit();
       this.currentXAxisLimit = Math.max(this.currentXAxisLimit, this.initialXLimit);
       this.chartData.xAxisLimit = this.currentXAxisLimit;
@@ -196,13 +240,13 @@ export default class GraficComponent {
 
   updateXAxisLimit() {
     let maxX = 0;
-    this.chartData.functions.forEach((func) => {
-      if (func.functionType === 'trapezoidal' && func.points) {
-        maxX = Math.max(maxX, func.points.a, func.points.b, func.points.c, func.points.d);
-      } else if (func.functionType === 'triangular' && func.points) {
-        maxX = Math.max(maxX, func.points.a, func.points.b, func.points.c);
-      } else if (func.functionType === 'sigmoide' && func.points) {
-        maxX = Math.max(maxX, func.points.a, func.points.b, func.points.c, func.points.d, func.points.e);
+    this.chartData.linguisticValues.forEach((lv) => {
+      if (lv.functionType === 'trapezoidal' && lv.points) {
+        maxX = Math.max(maxX, lv.points.a, lv.points.b, lv.points.c, lv.points.d);
+      } else if (lv.functionType === 'triangular' && lv.points) {
+        maxX = Math.max(maxX, lv.points.a, lv.points.b, lv.points.c);
+      } else if (lv.functionType === 'sigmoide' && lv.points) {
+        maxX = Math.max(maxX, lv.points.a, lv.points.b, lv.points.c, lv.points.d, lv.points.e);
       }
     });
     this.initialXLimit = Math.max(1, maxX);
@@ -212,21 +256,18 @@ export default class GraficComponent {
     }
   }
 
-  isLinguisticVariableValid(): boolean {
-    return !!this.selectedLinguisticVariable;
-  }
-
   getMaxXFromAllFunctions(): number {
     let maxX = 0;
-    this.chartData.functions.forEach((func) => {
-      if (func.functionType === 'trapezoidal' && func.points) {
-        maxX = Math.max(maxX, func.points.a, func.points.b, func.points.c, func.points.d);
-      } else if (func.functionType === 'triangular' && func.points) {
-        maxX = Math.max(maxX, func.points.a, func.points.b, func.points.c);
-      } else if (func.functionType === 'sigmoide' && func.points) {
-        maxX = Math.max(maxX, func.points.a, func.points.b, func.points.c, func.points.d, func.points.e);
+    this.chartData.linguisticValues.forEach((lv) => {
+      if (lv.functionType === 'trapezoidal' && lv.points) {
+        maxX = Math.max(maxX, lv.points.a, lv.points.b, lv.points.c, lv.points.d);
+      } else if (lv.functionType === 'triangular' && lv.points) {
+        maxX = Math.max(maxX, lv.points.a, lv.points.b, lv.points.c);
+      } else if (lv.functionType === 'sigmoide' && lv.points) {
+        maxX = Math.max(maxX, lv.points.a, lv.points.b, lv.points.c, lv.points.d, lv.points.e);
       }
     });
     return maxX;
   }
+  
 }

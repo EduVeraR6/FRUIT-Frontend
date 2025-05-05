@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ResultsQuestionsResponse } from './interfaces/ResultsQuestionsResponse';
 import { TranslateModule } from '@ngx-translate/core';
+import { GameRoomsService } from '../game-rooms/services/game-rooms.service';
 
 @Component({
   selector: 'app-results',
@@ -16,20 +17,30 @@ export default class ResultsComponent implements OnInit {
   resultData: ResultsQuestionsResponse | null = null;
   expandedIndex: number | null = null;
 
-  constructor(private gameDataService: GameDataParamsService, private router: Router) {}
+  constructor(private gameRoomService: GameRoomsService, private gameDataService: GameDataParamsService, private router: Router) {}
 
   ngOnInit(): void {
     const result = this.gameDataService.getGameResult();
 
     if (result && result.data) {
       this.resultData = result.data;
+      this.gameDataService.setGameResultLocalStorage(JSON.stringify(this.resultData));
+
+    } else if (this.gameDataService.getGameResultLocalStorage() !== null) {
+      
+      this.resultData = this.gameDataService.getGameResultLocalStorage();
+
     } else {
-      // const gameResult = localStorage.getItem('gameResult'); //BORRAR
-      // this.resultData = gameResult ? JSON.parse(gameResult) : null; //BORRAR
-      this.router.navigate(['/game']);
+      
+      this.gameDataService.removeGameRoomIdLocalStorage();
+      this.gameDataService.clearQuestionIDLocalStorage();
+      this.gameDataService.clearQuestionsGameLocalStorage();
+      this.gameDataService.clearGameResultLocalStorage();
+      
       this.router.navigate(['/game'], {
-        queryParams: { mode: 'find' }, 
+        queryParams: { mode: 'find' },
       });
+      
     }
   }
 
@@ -38,10 +49,34 @@ export default class ResultsComponent implements OnInit {
   }
 
   backHome(): void {
-    this.router.navigate(['/home']);
+
+    this.gameDataService.removeGameRoomIdLocalStorage();
+    this.gameDataService.clearQuestionIDLocalStorage();
+    this.gameDataService.clearQuestionsGameLocalStorage();
+    this.gameDataService.clearGameResultLocalStorage();
+
+    this.router.navigate(['/game'], {
+      queryParams: { mode: 'find' }
+    });
+
   }
 
-  goGrafic(): void {
+  goGrafic(rnf_id : string): void {
+
+    this.gameDataService.setQuestionIDLocalStorage(rnf_id);
+
+    if (this.gameDataService.getQuestionsGameLocalStorage() === null) {
+
+      this.gameRoomService.getGameRoomQuestions(Number(this.gameDataService.getGameRoomIdLocalStorage()) ?? 0).subscribe(
+        (response) => {
+          this.gameDataService.setQuestionsGameLocalStorage(JSON.stringify(response.questions));
+        },
+        (error) => {
+          console.error('Error al obtener preguntas de la sala:', error.message);
+        }
+      );
+    }
+
     this.router.navigate(['/grafic']);
   }
 

@@ -41,8 +41,8 @@ export class LineChartComponent implements AfterViewInit, OnChanges {
       setTimeout(() => {
         if (
           changes['chartData'].currentValue &&
-          changes['chartData'].currentValue.functions &&
-          changes['chartData'].currentValue.functions.length > 0
+          changes['chartData'].currentValue.linguisticValues &&
+          changes['chartData'].currentValue.linguisticValues.length > 0
         ) {
           this.createChart(changes['chartData'].currentValue, this.linguisticVariable);
         } else {
@@ -122,35 +122,35 @@ export class LineChartComponent implements AfterViewInit, OnChanges {
 
     let allXValues: number[] = [];
 
-    data.functions.forEach((func, index) => {
+    data.linguisticValues.forEach((lv, index) => {
       let datasetData: DataPoint[] = [];
 
       // Ordenar los puntos del trapezoide para garantizar a <= b <= c <= d
-      if (func.functionType === 'trapezoidal') {
-        const sorted = [func.points.a, func.points.b, func.points.c, func.points.d].sort((a, b) => a - b);
-        [func.points.a, func.points.b, func.points.c, func.points.d] = sorted;
-
-      } else if (func.functionType === 'triangular') {
-        const sorted = [func.points.a, func.points.b, func.points.c].sort((a, b) => a - b);
-        [func.points.a, func.points.b, func.points.c] = sorted;
+      if (lv.functionType === 'trapezoidal') {
+        const sorted = [lv.points.a, lv.points.b, lv.points.c, lv.points.d].sort((a, b) => a - b);
+        [lv.points.a, lv.points.b, lv.points.c, lv.points.d] = sorted;
+        
+      } else if (lv.functionType === 'triangular') {
+        const sorted = [lv.points.a, lv.points.b, lv.points.c].sort((a, b) => a - b);
+        [lv.points.a, lv.points.b, lv.points.c] = sorted;
       }
 
-      const localMaxX = func.functionType === 'trapezoidal'
-        ? Math.max(func.points.d)
-        : Math.max(func.points.c);
+      const localMaxX = lv.functionType === 'trapezoidal'
+        ? Math.max(lv.points.d)
+        : Math.max(lv.points.c);
 
       const xValues = this.generateXValues(localMaxX, data.yAxisStep);
       allXValues.push(...xValues);
 
       datasetData = xValues.map(x => {
-        const y = func.functionType === 'trapezoidal'
-          ? this.trapezoidalFunction(x, func.points.a, func.points.b, func.points.c, func.points.d)
-          : this.triangularFunction(x, func.points.a, func.points.b, func.points.c);
+        const y = lv.functionType === 'trapezoidal'
+          ? this.trapezoidalFunction(x, lv.points.a, lv.points.b, lv.points.c, lv.points.d)
+          : this.triangularFunction(x, lv.points.a, lv.points.b, lv.points.c);
         return { x, y };
       });
 
       datasets.push({
-        label: `μ${func.linguisticValue}(x)`,
+        label: `μ${lv.nameValue}(x)`,
         data: datasetData,
         borderColor: colors[index % colors.length],
         backgroundColor: this.hexToRgba(colors[index % colors.length], 0.1),

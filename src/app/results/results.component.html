@@ -24,13 +24,20 @@
         <!-- Iterar sobre las tarjetas -->
         <div *ngFor="let nfr of resultData?.result; let i = index"
             class="bg-white rounded-2xl border border-gray-300 shadow-md hover:shadow-lg transition overflow-hidden">
-            
+
             <!-- Tarjeta de RNF -->
             <div (click)="toggleCard(i)"
                 class="cursor-pointer p-4 flex justify-between items-center rounded-t-xl bg-blue-100 hover:bg-blue-200 transition">
                 <!-- Texto del RNF -->
-                <h6 class="text-sm font-bold text-blue-700 flex-1">RNF {{ i + 1 }}: {{ nfr.nfr }}</h6>
-                
+                 <div>
+                    <h6 class="text-sm font-bold text-blue-700 flex-1">RNF {{ i + 1 }}: {{ nfr.nfr }}</h6>
+                    <button (click)="goGrafic(nfr.id)"
+                        class="bg-[#28A745] text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 disabled:opacity-50">
+                        Graficar
+                    </button>
+
+                 </div>
+
                 <!-- Ícono SVG -->
                 <svg
                     [class]="expandedIndex === i ? 'rotate-180' : ''"
@@ -99,11 +106,7 @@
     <div class="navigation-buttons flex justify-center items-center mt-6 space-x-4">
         <button (click)="backHome()"
             class="bg-[#4A90E2] text-white px-4 py-2 rounded-lg shadow-md disabled:opacity-50">
-            {{'BUTTON_NAVIGATION_TABLE.PREVIOUS' | translate}}
-        </button>
-        <button (click)="goGrafic()"
-            class="bg-[#4A90E2] text-white px-4 py-2 rounded-lg shadow-md disabled:opacity-50">
-            {{'BUTTON_NAVIGATION_TABLE.NEXT' | translate}}
+            Finalizar
         </button>
     </div>
 

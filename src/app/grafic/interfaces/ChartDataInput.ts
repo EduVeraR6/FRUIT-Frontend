@@ -1,8 +1,15 @@
 export interface ChartDataInput {
-  functions: {
-    linguisticValue: string;
+  linguisticVariable: string;
+  linguisticValues: {
+    nameValue: string;
     functionType: string;
-    points: any;
+    points: {
+      a: number;
+      b: number;
+      c: number;
+      d: number;
+      e: number;
+    };
   }[];
   xAxisLimit: number;
   yAxisStep: number;

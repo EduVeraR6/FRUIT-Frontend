@@ -102,6 +102,7 @@ export default class QuestionsComponent implements OnInit {
     } else {
       const dataGameStorage =
         this.gameDataParamsService.getGameDataLocalStorage();
+      console.log('dataGameStorage', dataGameStorage);
       if (dataGameStorage != null) {
         this.questions = dataGameStorage;
         this.showQuestion();
@@ -227,8 +228,8 @@ export default class QuestionsComponent implements OnInit {
       next: (response) => {
         this.loadingService.hideLoading();
         this.gameDataParamsService.clearGameDataLocalStorage();
-        this.gameDataParamsService.removeGameRoomIdLocalStorage();
         localStorage.removeItem('timer');
+        console.log('onsubmit respuesta:', response);
         this.gameDataParamsService.setGameResult(response);
         // localStorage.setItem('gameResult', JSON.stringify(response.data)); //BORRAR
         this.router.navigate(['/results']);

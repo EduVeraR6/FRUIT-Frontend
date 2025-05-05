@@ -17,7 +17,7 @@ export class LinguisticValueComponent implements OnInit {
   @Input() editingValue: any = null;
   @Input() availableValues: string[] = [];
 
-  linguisticValue: string = '';
+  nameValue: string = '';
   functionType: string = 'trapezoidal';
   pointA: number | null = null;
   pointB: number | null = null;
@@ -27,7 +27,7 @@ export class LinguisticValueComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingValue) {
-      this.linguisticValue = this.editingValue.linguisticValue;
+      this.nameValue = this.editingValue.nameValue;
       this.functionType = this.editingValue.functionType;
       if (this.editingValue.points) {
         this.pointA = this.editingValue.points.a;
@@ -38,7 +38,7 @@ export class LinguisticValueComponent implements OnInit {
       }
     } else {
       this.onFunctionTypeChange();
-      this.linguisticValue = this.availableValues[0] || ''; 
+      this.nameValue = this.availableValues[0] || ''; 
     }
   }
 
@@ -51,7 +51,7 @@ export class LinguisticValueComponent implements OnInit {
   }
 
   isValid(): boolean {
-    if (!this.linguisticValue) {
+    if (!this.nameValue) {
       return false;
     }
 
@@ -157,19 +157,19 @@ export class LinguisticValueComponent implements OnInit {
       let newValue: any;
       if (this.functionType === 'trapezoidal') {
         newValue = {
-          linguisticValue: this.linguisticValue,
+          nameValue: this.nameValue,
           functionType: this.functionType,
           points: { a: this.pointA, b: this.pointB, c: this.pointC, d: this.pointD },
         };
       } else if (this.functionType === 'triangular') {
         newValue = {
-          linguisticValue: this.linguisticValue,
+          nameValue: this.nameValue,
           functionType: this.functionType,
           points: { a: this.pointA, b: this.pointB, c: this.pointC },
         };
       } else if (this.functionType === 'sigmoide') {
         newValue = {
-          linguisticValue: this.linguisticValue,
+          nameValue: this.nameValue,
           functionType: this.functionType,
           points: { a: this.pointA, b: this.pointB, c: this.pointC, d: this.pointD, e: this.pointE },
         };
