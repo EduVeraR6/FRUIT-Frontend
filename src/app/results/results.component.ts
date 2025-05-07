@@ -61,23 +61,22 @@ export default class ResultsComponent implements OnInit {
 
   }
 
-  goGrafic(rnf_id : string): void {
-
+  goGrafic(rnf_id: string): void {
     this.gameDataService.setQuestionIDLocalStorage(rnf_id);
-
+  
     if (this.gameDataService.getQuestionsGameLocalStorage() === null) {
-
       this.gameRoomService.getGameRoomQuestions(Number(this.gameDataService.getGameRoomIdLocalStorage()) ?? 0).subscribe(
         (response) => {
           this.gameDataService.setQuestionsGameLocalStorage(JSON.stringify(response.questions));
+          this.router.navigate(['/grafic']);
         },
         (error) => {
           console.error('Error al obtener preguntas de la sala:', error.message);
         }
       );
+    } else {
+      this.router.navigate(['/grafic']);
     }
-
-    this.router.navigate(['/grafic']);
   }
 
 }

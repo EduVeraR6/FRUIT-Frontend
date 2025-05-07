@@ -54,7 +54,6 @@ export default class GraficComponent {
     this.updateXAxisLimit();
   }
 
-
   ngOnInit(): void {    
 
     this.game_room_id = Number(this.gameDataService.getGameRoomIdLocalStorage()) ?? 0;
@@ -100,6 +99,7 @@ export default class GraficComponent {
     );
     */
   }
+  
 
 
   backResults(): void {
