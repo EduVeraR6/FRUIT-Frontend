@@ -102,6 +102,7 @@ export default class QuestionsComponent implements OnInit {
     } else {
       const dataGameStorage =
         this.gameDataParamsService.getGameDataLocalStorage();
+      console.log('dataGameStorage', dataGameStorage);
       if (dataGameStorage != null) {
         this.questions = dataGameStorage;
         this.showQuestion();
@@ -212,7 +213,7 @@ export default class QuestionsComponent implements OnInit {
 
     const body: BodyResultsQuestions = {
       game_room_id: Number(
-        this.gameDataParamsService.getGameRoomIdLocalStorage()
+        this.gameDataParamsService.getGameRoomIdLocalStorage() //ID DEL ROOM
       ),
       duration: this.formatTime(this.timer),
       answers: this.completedAnswers.map((answer) => ({
@@ -227,8 +228,8 @@ export default class QuestionsComponent implements OnInit {
       next: (response) => {
         this.loadingService.hideLoading();
         this.gameDataParamsService.clearGameDataLocalStorage();
-        this.gameDataParamsService.removeGameRoomIdLocalStorage();
         localStorage.removeItem('timer');
+        console.log('onsubmit respuesta:', response);
         this.gameDataParamsService.setGameResult(response);
         // localStorage.setItem('gameResult', JSON.stringify(response.data)); //BORRAR
         this.router.navigate(['/results']);
@@ -353,9 +354,9 @@ export default class QuestionsComponent implements OnInit {
 
   isDraggingBlocked: boolean = false;
 
-blockDragging(): void {
-  this.isDraggingBlocked = true;
-}
+  blockDragging(): void {
+    this.isDraggingBlocked = true;
+  }
 
   resetTimer(): void {
     this.timer = 0;

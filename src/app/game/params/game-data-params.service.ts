@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class GameDataParamsService {
  private gameData: any;
  private gameDataPractice: any;
- private gameResult: any = null;
+  private gameResult: any = null;
 
   setGameData(data: any) {
     this.gameData = data;
@@ -81,4 +81,60 @@ export class GameDataParamsService {
   getGameResult(): any {
     return this.gameResult;
   }
+
+
+  clearQuestionIDLocalStorage() {
+    localStorage.removeItem('questionID');
+  }
+
+  setQuestionIDLocalStorage(questionID: any): void {
+    localStorage.setItem('questionID', questionID);
+  }
+
+  getQuestionIDLocalStorage(): any {
+    const data = localStorage.getItem('questionID');
+    if (data != null) {
+      return JSON.parse(data!);
+    } else {
+      return null;
+    }
+  }
+
+
+
+  clearQuestionsGameLocalStorage() {
+    localStorage.removeItem('questions');
+  }
+
+  setQuestionsGameLocalStorage(questions: any): void {
+    localStorage.setItem('questions', questions);
+  }
+
+  getQuestionsGameLocalStorage(): any {
+    const data = localStorage.getItem('questions');
+    if (data != null) {
+      return JSON.parse(data!);
+    } else {
+      return null;
+    }
+  }
+
+
+  clearGameResultLocalStorage() {
+    localStorage.removeItem('result');
+  }
+
+  setGameResultLocalStorage(result: any): void {
+    localStorage.setItem('result', result);
+  }
+
+  getGameResultLocalStorage(): any {
+    const data = localStorage.getItem('result');
+    if (data != null) {
+      return JSON.parse(data!);
+    } else {
+      return null;
+    }
+  }
+
 }

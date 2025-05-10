@@ -168,6 +168,7 @@
     "BUTTON_CANCEL": "Cancelar"
   },
   "RESULTS": {
+    "RESULTS": "Resultados",
     "TITLE": "Resultados del juego",
     "TOTAL_SCORE": "Puntuación total: ",
     "DETAILS": "Detalles: ",
@@ -175,7 +176,31 @@
     "LINGUISTIC_VALUE": "Valor lingüístico: ",
     "LINGUISTIC_RECOMMENDATION": "Recomendación lingüística: ",
     "YOUR_ANSWER": "Tu respuesta: ",
-    "FEEDBACK": "Retroalimentación: "
+    "FEEDBACK": "Retroalimentación: ",
+    "BUTTON_CREATE_GRAPH" : "Crear gráfico",
+    "BUTTON_EDIT_GRAPH" : "Editar gráfico",
+    "BUTTON_FINISH" : "Finalizar"
+  },
+  "GRAPHIC": {
+   "LINGUISTIC_VARIABLE": "Variable Lingüística",
+   "LINGUISTIC_VALUES": "Valores Lingüísticos",
+   "LINGUISTIC_VALUE": "Valor Lingüístico",
+   "BELONGING_FUNCTION" : "Función de Pertenencia",
+   "POINT_A" : "Punto A",
+   "POINT_B" : "Punto B",
+   "POINT_C" : "Punto C",
+   "POINT_D" : "Punto D",
+   "POINT_E" : "Punto E",
+   "ADD-VALUE" : "Agregar Valor",
+   "EDIT-VALUE" : "Editar Valor",
+   "CUSTOM_SCALE": "Personalizar Escala",
+   "SAVE_CHANGES" : "Guardar Cambios",
+   "BACK" : "Volver",
+   "LIMIT_X": "Límite eje X",
+   "JUMP_Y": "Salto Y",
+   "APLICATION": "Aplicar",
+   "CANCEL": "Cancelar",
+   "NOT_LINGUISTIC_VARIABLE": " No se han agregado valores lingüísticos."
   },
   "GAME_ROOM": {
     "BUTTON_CREATE": "Crear sala",
