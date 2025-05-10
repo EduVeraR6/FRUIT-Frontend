@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ResultsQuestionsResponse } from './interfaces/ResultsQuestionsResponse';
 import { TranslateModule } from '@ngx-translate/core';
 import { GameRoomsService } from '../game-rooms/services/game-rooms.service';
+import { GraficService } from '../grafic/services/GraficService.service';
 
 @Component({
   selector: 'app-results',
@@ -16,11 +17,16 @@ import { GameRoomsService } from '../game-rooms/services/game-rooms.service';
 export default class ResultsComponent implements OnInit {
   resultData: ResultsQuestionsResponse | null = null;
   expandedIndex: number | null = null;
+  graphedRnfIds: string[] = [];
 
-  constructor(private gameRoomService: GameRoomsService, private gameDataService: GameDataParamsService, private router: Router) {}
+
+  constructor(private gameRoomService: GameRoomsService, private gameDataService: GameDataParamsService, private router: Router, private graficService : GraficService) {}
 
   ngOnInit(): void {
     const result = this.gameDataService.getGameResult();
+
+    // Load graph status from localStorage
+    this.loadGraphedRnfs();
 
     if (result && result.data) {
       this.resultData = result.data;
@@ -49,34 +55,62 @@ export default class ResultsComponent implements OnInit {
   }
 
   backHome(): void {
-
     this.gameDataService.removeGameRoomIdLocalStorage();
     this.gameDataService.clearQuestionIDLocalStorage();
     this.gameDataService.clearQuestionsGameLocalStorage();
     this.gameDataService.clearGameResultLocalStorage();
+    
+    // Clear graphed RNFs status
+    localStorage.removeItem('graphedRnfs');
 
     this.router.navigate(['/game'], {
       queryParams: { mode: 'find' }
     });
-
   }
 
   goGrafic(rnf_id: string): void {
     this.gameDataService.setQuestionIDLocalStorage(rnf_id);
-  
+    
+    const editMode = this.isRnfGraphed(rnf_id);
+    localStorage.setItem(`editMode_${rnf_id}`, editMode.toString());
+    
     if (this.gameDataService.getQuestionsGameLocalStorage() === null) {
-      this.gameRoomService.getGameRoomQuestions(Number(this.gameDataService.getGameRoomIdLocalStorage()) ?? 0).subscribe(
-        (response) => {
-          this.gameDataService.setQuestionsGameLocalStorage(JSON.stringify(response.questions));
-          this.router.navigate(['/grafic']);
-        },
-        (error) => {
-          console.error('Error al obtener preguntas de la sala:', error.message);
-        }
-      );
+      this.gameRoomService
+        .getGameRoomQuestions(
+          Number(this.gameDataService.getGameRoomIdLocalStorage()) ?? 0
+        )
+        .subscribe(
+          (response) => {
+            this.gameDataService.setQuestionsGameLocalStorage(
+              JSON.stringify(response.questions)
+            );
+            // Ya no llamamos a markRnfAsGraphed aquí
+            this.router.navigate(['/grafic'], { queryParams: { edit: editMode } });
+          },
+          (error) => {
+            console.error('Error al obtener preguntas de la sala:', error.message);
+          }
+        );
     } else {
-      this.router.navigate(['/grafic']);
+      // Ya no llamamos a markRnfAsGraphed aquí tampoco
+      this.router.navigate(['/grafic'], { queryParams: { edit: editMode } });
     }
   }
 
+  isRnfGraphed(rnf_id: string): boolean {
+    return this.graficService.isRnfGraphed(rnf_id);
+  }
+
+
+  private loadGraphedRnfs(): void {
+    const storedGraphedRnfs = localStorage.getItem('graphedRnfs');
+    if (storedGraphedRnfs) {
+      try {
+        this.graphedRnfIds = JSON.parse(storedGraphedRnfs);
+      } catch (e) {
+        console.error('Error parsing graphed RNFs from localStorage:', e);
+        this.graphedRnfIds = [];
+      }
+    }
+  }
 }

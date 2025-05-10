@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common'; 
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-personalize-scale',
   standalone: true,
-  imports: [FormsModule, NgIf],
+  imports: [FormsModule, NgIf, TranslateModule],
   templateUrl: './personalize-scale.component.html',
   styleUrl: './personalize-scale.component.css'
 })

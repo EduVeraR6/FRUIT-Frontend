@@ -31,11 +31,13 @@
                 <!-- Texto del RNF -->
                  <div>
                     <h6 class="text-sm font-bold text-blue-700 flex-1">RNF {{ i + 1 }}: {{ nfr.nfr }}</h6>
-                    <button (click)="goGrafic(nfr.id)"
-                        class="bg-[#28A745] text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 disabled:opacity-50">
-                        Graficar
+                    
+                    <!-- Botón de Graficar o Actualizar Gráfica según el estado -->
+                    <button (click)="goGrafic(nfr.id); $event.stopPropagation()"
+                        [ngClass]="isRnfGraphed(nfr.id) ? 'bg-gray-400 hover:bg-gray-700' : 'bg-[#28A745] hover:bg-green-700'"
+                        class="text-white px-4 py-2 rounded-lg shadow-md disabled:opacity-50">
+                        {{ (isRnfGraphed(nfr.id) ? 'RESULTS.BUTTON_EDIT_GRAPH' : 'RESULTS.BUTTON_CREATE_GRAPH') | translate }}
                     </button>
-
                  </div>
 
                 <!-- Ícono SVG -->
@@ -57,7 +59,6 @@
                         <span *ngIf="!nfr.correct_variable" class="ml-2 text-red-500">✖</span>
                     </h6>
                     <p class="text-sm text-gray-800">{{ 'RESULTS.YOUR_ANSWER' | translate}} <strong>{{ nfr.user_variable }}</strong></p>
-                    <!-- <p class="text-sm text-gray-500">Puntuación: {{ nfr.variable_score }}</p> -->
                     <p *ngIf="!nfr.correct_variable" class="text-xs text-red-600 mt-1">
                         <strong>{{ 'RESULTS.FEEDBACK' | translate}}</strong> {{ nfr.feedback_variable || 'No se proporcionó feedback' }}
                     </p>
@@ -71,7 +72,6 @@
                         <span *ngIf="!nfr.correct_value" class="ml-2 text-red-500">✖</span>
                     </h6>
                     <p class="text-sm text-gray-800">{{ 'RESULTS.YOUR_ANSWER' | translate}} <strong>{{ nfr.user_value }}</strong></p>
-                    <!-- <p class="text-sm text-gray-500">Puntuación: {{ nfr.value_score }}</p> -->
                     <p *ngIf="!nfr.correct_value" class="text-xs text-red-600 mt-1">
                         <strong>{{ 'RESULTS.FEEDBACK' | translate}}</strong> {{ nfr.feedback_value || 'No se proporcionó feedback' }}
                     </p>
@@ -85,20 +85,11 @@
                         <span *ngIf="!nfr.correct_recomend" class="ml-2 text-red-500">✖</span>
                     </h6>
                     <p class="text-sm text-gray-800">{{ 'RESULTS.YOUR_ANSWER' | translate}} <strong>{{ nfr.user_recomend }}</strong></p>
-                    <!-- <p class="text-sm text-gray-500">Puntuación: {{ nfr.recomend_score }}</p> -->
                     <p *ngIf="!nfr.correct_recomend" class="text-xs text-red-600 mt-1">
                         <strong>{{ 'RESULTS.FEEDBACK' | translate}}</strong> {{ nfr.feedback_recomend || 'No se proporcionó feedback' }}
                     </p>
                 </div>
-            
-                <!-- Puntaje Total del RNF -->
-                <!-- <div class="pt-4 border-t border-gray-200">
-                    <p class="text-sm font-bold text-green-600">
-                        Puntaje Total del RNF: {{ nfr.total_score_nfr }}
-                    </p>
-                </div> -->
             </div>
-            
         </div>
     </div>
     
@@ -106,9 +97,7 @@
     <div class="navigation-buttons flex justify-center items-center mt-6 space-x-4">
         <button (click)="backHome()"
             class="bg-[#4A90E2] text-white px-4 py-2 rounded-lg shadow-md disabled:opacity-50">
-            Finalizar
+            {{ 'RESULTS.BUTTON_FINISH' | translate}}
         </button>
     </div>
-
 </div>
-
