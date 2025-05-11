@@ -180,7 +180,8 @@
     "FEEDBACK": "Retroalimentación: ",
     "BUTTON_CREATE_GRAPH" : "Crear gráfico",
     "BUTTON_EDIT_GRAPH" : "Editar gráfico",
-    "BUTTON_FINISH" : "Finalizar"
+    "BUTTON_FINISH" : "Finalizar",
+    "NOT_GRAPHED": "No graficado"
   },
   "GRAPHIC": {
    "LINGUISTIC_VARIABLE": "Variable Lingüística",

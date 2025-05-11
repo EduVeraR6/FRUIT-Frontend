@@ -180,7 +180,8 @@
     "FEEDBACK": "Feedback: ",
     "BUTTON_CREATE_GRAPH" : "Create Graph",
     "BUTTON_EDIT_GRAPH" : "Edit Graph",
-    "BUTTON_FINISH" : "Finish"
+    "BUTTON_FINISH" : "Finish",
+    "NOT_GRAPHED": "Not graphed"
   },
   "GRAPHIC": {
   "LINGUISTIC_VARIABLE": "Linguistic Variable",

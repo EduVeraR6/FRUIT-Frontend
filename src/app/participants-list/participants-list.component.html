@@ -1,5 +1,5 @@
 <div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-    <div class="bg-white rounded-lg shadow-lg w-4/5 max-w-lg">
+    <div class="bg-white rounded-lg shadow-lg w-5/6 max-w-3xl">
         <div class="px-4 pt-4 border-b border-gray-200">
             <h3 class="text-xl font-bold text-gray-800 m-0">{{ 'TABLE.ANSWERS' | translate }}</h3>
         </div>
@@ -57,6 +57,16 @@
                         <strong>{{ 'RESULTS.FEEDBACK' | translate }}</strong> 
                         {{ question.feedback_recomend || ('NO_FEEDBACK' | translate) }}
                     </p>
+                    
+                    <p *ngIf="!graphicExists(question.id)"
+                        class="italic border border-gray-400 text-gray-400 rounded-md px-2 py-1 inline-block">{{ 'RESULTS.NOT_GRAPHED' |
+                        translate }}</p>
+                    
+                    <div *ngIf="graphicExists(question.id)" class="mb-4 bg-white rounded-md p-4">
+                        <app-line-chart [chartData]="getChartData(question.id)"
+                            [linguisticVariable]="getChartData(question.id).linguisticVariable"
+                            (chartRendered)="onChartRendered($event)"></app-line-chart>
+                        </div>
                     
                    <!-- Separador condicional -->
                    <hr *ngIf="!last" class="mt-6 border-t border-gray-300">
@@ -149,3 +159,11 @@
             {{ 'BUTTON_NAVIGATION_TABLE.NEXT' | translate }}&raquo;
         </button>
     </div>
+</div>
+
+<div *ngIf="print && !areAllChartsRendered"
+    class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="rounded-lg p-8">
+        <div class="animate-spin rounded-full h-20 w-20 border-t-4 border-blue-500 border-solid"></div>
+    </div>
+</div>

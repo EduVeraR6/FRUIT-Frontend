@@ -67,14 +67,14 @@ export default class GraficComponent {
     const questions = this.gameDataService.getQuestionsGameLocalStorage();
     const rnf = questions?.find((question: any) => question.id === this.question_id);
 
-      this.route.queryParams.subscribe(params => {
-        this.isEditMode = params['edit'] === 'true';
-      });
+    this.route.queryParams.subscribe(params => {
+      this.isEditMode = params['edit'] === 'true';
+    });
 
-      if (!this.isEditMode) {
-        const flag = localStorage.getItem(`editMode_${this.question_id}`);
-        this.isEditMode = flag === 'true';
-      }
+    if (!this.isEditMode) {
+      const flag = localStorage.getItem(`editMode_${this.question_id}`);
+      this.isEditMode = flag === 'true';
+    }
 
     if (this.game_room_id === 0 || this.question_id === 0 || !rnf) {
       this.gameDataService.removeGameRoomIdLocalStorage();
@@ -98,14 +98,13 @@ export default class GraficComponent {
 
    // EDITAR
     if (this.isEditMode) {
-      this.graficChartService.getGraficByRoomAndQuestionAndUser(this.game_room_id, this.question_id).subscribe(
+      this.graficChartService.getGraficByRoomAndQuestionAndUser(this.game_room_id, this.question_id, -1).subscribe(
         (response) => {
           if (response.data.length > 0) {
             this.chartData = response.data[0].data;
             this.chartData.linguisticVariable = this.selectedLinguisticVariable;
-            this.currentXAxisLimit = Math.max(this.currentXAxisLimit, this.chartData.xAxisLimit);
-            this.currentYAxisStep = Math.max(this.currentYAxisStep, this.chartData.yAxisStep);
-            this.updateXAxisLimit();
+            this.currentXAxisLimit = this.chartData.xAxisLimit;
+            this.currentYAxisStep = this.chartData.yAxisStep;
           } else {
             console.log('No hay datos de la gráfica para esta sala y pregunta.');
           }

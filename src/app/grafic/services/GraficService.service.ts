@@ -31,7 +31,7 @@ export class GraficService {
   }
 
 
-  getGraficByRoomAndQuestionAndUser(game_room_id: number, question_id : number): Observable<any> {
+  getGraficByRoomAndQuestionAndUser(game_room_id: number, question_id: number, user_id?: number): Observable<any> {
     const userData = this.authService.getUserData();
   
     const headers = new HttpHeaders({
@@ -39,7 +39,7 @@ export class GraficService {
     });
   
     return this.http
-      .post<any>(this.apiUrlResultsGraphicsByRoomQuestionUser, {game_room_id, question_id}, { headers })
+      .post<any>(this.apiUrlResultsGraphicsByRoomQuestionUser, { game_room_id, question_id, user_id }, { headers })
       .pipe(
         tap((response) => {
           return response.data;
