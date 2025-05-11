@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LinguisticValueComponent } from "./linguistic-value/linguistic-value.component";
@@ -10,7 +10,7 @@ import { GameDataParamsService } from '../game/params/game-data-params.service';
 import { ResultsQuestionsResponse } from '../results/interfaces/ResultsQuestionsResponse';
 import { GraficService } from './services/GraficService.service';
 import { GraficChartGameModel } from './interfaces/ApiResponse';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from '../shared/alert.service';
 
 @Component({
@@ -45,12 +45,17 @@ export default class GraficComponent {
   rnf_desc = '';
   
   currentVariableValues: string[] = [];
-  
+  isEditMode: boolean = false;
   //RESULTADOS DATA
   resultData: ResultsQuestionsResponse | null = null;
 
   constructor(
-      private alertService: AlertService, private gameDataService: GameDataParamsService, private cdr: ChangeDetectorRef , private graficChartService: GraficService, private router: Router) {
+    private route: ActivatedRoute,
+    private alertService: AlertService,
+    private gameDataService: GameDataParamsService,
+    private cdr: ChangeDetectorRef ,
+    private graficChartService: GraficService,
+    private router: Router) {
     this.updateXAxisLimit();
   }
 
@@ -62,42 +67,58 @@ export default class GraficComponent {
     const questions = this.gameDataService.getQuestionsGameLocalStorage();
     const rnf = questions?.find((question: any) => question.id === this.question_id);
 
-    if (this.game_room_id === 0 || this.question_id === 0 || !rnf) {
+      this.route.queryParams.subscribe(params => {
+        this.isEditMode = params['edit'] === 'true';
+      });
 
+      if (!this.isEditMode) {
+        const flag = localStorage.getItem(`editMode_${this.question_id}`);
+        this.isEditMode = flag === 'true';
+      }
+
+    if (this.game_room_id === 0 || this.question_id === 0 || !rnf) {
       this.gameDataService.removeGameRoomIdLocalStorage();
       this.gameDataService.clearQuestionIDLocalStorage();
       this.gameDataService.clearQuestionsGameLocalStorage();
       this.gameDataService.clearGameResultLocalStorage();
-
+    
       this.router.navigate(['/game'], {
-        queryParams: { mode: 'find' }, 
+        queryParams: { mode: 'find' },
       });
+    
+      return; 
     }
-
-    this.rnf_desc = rnf?.nfr || '';
-    this.selectedLinguisticVariable = rnf?.variable || '';
+    
+    // Estas líneas deben ir después de la validación anterior
+    this.rnf_desc = rnf.nfr || '';
+    this.selectedLinguisticVariable = rnf.variable || '';
     this.currentVariableValues = [rnf.value, rnf.recomend];
     this.chartData.linguisticVariable = this.selectedLinguisticVariable;
+    
 
-    /*
-
-    ***** EDITAR
-
-    // SE CONSUME EL SERVICIO PARA OBTENER LA GRAFICA QUE LA PREGUNTA
-
-    this.graficChartService.getGraficByRoomAndQuestionAndUser(this.game_room_id, this.question_id).subscribe(
-      (response) => {
-
-        console.log('Gráfica:', response.data[0]);
-        this.chartData = response.data[0].data;
-        this.selectedLinguisticVariable = this.chartData.linguisticVariable;    
-
-      },
-      (error) => {
-        console.error('Error al obtener gráficos:', error.message);
-      }
-    );
-    */
+   // EDITAR
+    if (this.isEditMode) {
+      this.graficChartService.getGraficByRoomAndQuestionAndUser(this.game_room_id, this.question_id).subscribe(
+        (response) => {
+          if (response.data.length > 0) {
+            this.chartData = response.data[0].data;
+            this.chartData.linguisticVariable = this.selectedLinguisticVariable;
+            this.currentXAxisLimit = Math.max(this.currentXAxisLimit, this.chartData.xAxisLimit);
+            this.currentYAxisStep = Math.max(this.currentYAxisStep, this.chartData.yAxisStep);
+            this.updateXAxisLimit();
+          } else {
+            console.log('No hay datos de la gráfica para esta sala y pregunta.');
+          }
+        },
+        (error) => {
+          console.error('Error al obtener la gráfica:', error.message);
+        }
+      );
+    } else {
+      // Modo de creación
+      this.chartData.linguisticVariable = this.selectedLinguisticVariable;
+    }
+   
   }
   
 
@@ -116,8 +137,8 @@ export default class GraficComponent {
   }
 
 
-  saveGrafic() {
-
+  saveGrafic(): void {
+    // Validación existente
     if (this.chartData.linguisticValues.length !== 2) {
       this.alertService.showAlert(
         'Faltan valores linguísticos por graficar.',
@@ -131,20 +152,43 @@ export default class GraficComponent {
       question_id: this.question_id,
       data: this.chartData
     };
-    
-    this.graficChartService.createGraphics(dataToSave).subscribe(
-      () => {
-        this.alertService.showAlert(
-          'Gráfica guardada correctamente.',
-          false
-        );
-        this.router.navigate(['/results']);
-      },
-      (error) => {
-        console.error('Error al guardar la gráfica:', error.message);
-      }
-    );
+
+    if (this.isEditMode) {
+
+
+      this.graficChartService.updateGraphics(dataToSave).subscribe(
+        () => {
+          this.alertService.showAlert(
+            'Gráfica actualizada correctamente.',
+            false
+          );
+          // No necesitamos marcar como graficado aquí porque ya estaba marcado
+          this.router.navigate(['/results']);
+        },
+        (error) => {
+          console.error('Error al actualizar la gráfica:', error.message);
+        }
+      );
+    } else {
+      this.graficChartService.createGraphics(dataToSave).subscribe(
+        () => {
+          this.alertService.showAlert(
+            'Gráfica guardada correctamente.',
+            false
+          );
+          
+          // AQUÍ es donde debemos marcar el RNF como graficado
+          this.graficChartService.markRnfAsGraphed(this.question_id.toString());
+          
+          this.router.navigate(['/results']);
+        },
+        (error) => {
+          console.error('Error al guardar la gráfica:', error.message);
+        }
+      );
+    }
   }
+
 
 
   areNewValuesAvailable(): boolean {  
