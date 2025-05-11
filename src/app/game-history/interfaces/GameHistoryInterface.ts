@@ -6,6 +6,7 @@ export interface GameHistoryInterface {
     created_at:         Date;
     game_room:          GameRoom;
     user:               User;
+    isGraphicMissing:   boolean;
 }
 
 export interface AnsweredQuestion {
@@ -23,8 +24,9 @@ export interface AnsweredQuestion {
 }
 
 export interface GameRoom {
-    id:   number;
-    code: string;
+    id:              number;
+    code:            string;
+    expiration_date: string;
 }
 
 export interface User {

@@ -196,11 +196,24 @@
                 {{ game.score }} / 100
               </td>
               <td class="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">{{ game.duration }}</td>
-              <td class="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">  <button 
-                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-300"
-                (click)="openAnswersModal(game.answered_questions, game)">
-                {{ 'TABLE.VIEW_ANSWERS' | translate }}
-            </button></td>
+              <td class="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">
+                <div class="flex gap-2">
+                  
+                  <button class="px-2 py-1 text-xs font-medium text-white bg-[#0D92F4] rounded hover:bg-blue-700 focus:outline-none"
+                    (click)="openAnswersModal(game.answered_questions, game)">
+                    {{ 'TABLE.VIEW_ANSWERS' | translate }}
+                  </button>
+
+                  <button [disabled]="!game.isGraphicMissing && isExpiredGame(game.game_room.expiration_date)"
+                    class="px-2 py-1 text-xs font-medium text-white rounded"
+                    [ngClass]="!game.isGraphicMissing ? 'bg-gray-400 text-gray-600 cursor-not-allowed' : 'hover:bg-green-700 focus:outline-none bg-[#28A745]'"
+                    (click)="goResults(game)">
+                    Continuar Gráfica
+                  </button>
+
+                </div>
+                
+              </td>
             </tr>
           </tbody>
         </table>

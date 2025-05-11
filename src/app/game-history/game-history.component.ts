@@ -6,6 +6,8 @@ import { GameHistoryService } from './services/game-history.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { AnsweredQuestion, GameHistoryInterface } from './interfaces/GameHistoryInterface';
+import { GameDataParamsService } from '../game/params/game-data-params.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game-history',
@@ -33,7 +35,9 @@ export default class GameHistoryComponent implements OnInit {
   constructor(
     private gameHistoryService: GameHistoryService,
     private alertService: AlertService, 
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private gameDataParamsService: GameDataParamsService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -261,6 +265,29 @@ export default class GameHistoryComponent implements OnInit {
     } else {
       console.error('No se encontró el contenido a imprimir.');
     }
+  }
+
+
+  isExpiredGame(expiration_date : string): boolean {
+    const currentDate = new Date();
+    const expirationDate = new Date(expiration_date);
+    return expirationDate >= currentDate;
+  }
+
+
+  goResults(game: GameHistoryInterface): void {
+    
+    this.gameDataParamsService.setGameRoomIdLocalStorage(game.game_room.id.toString());
+
+    this.gameDataParamsService.setGameResultLocalStorage(
+      JSON.stringify({
+        result: game.answered_questions,
+        total_score: game.score
+      })
+    );
+
+    this.router.navigate(['/results']);
+
   }
 
 }
