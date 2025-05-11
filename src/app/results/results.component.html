@@ -30,7 +30,7 @@
                 class="cursor-pointer p-4 flex justify-between items-center rounded-t-xl bg-blue-100 hover:bg-blue-200 transition">
                 <!-- Texto del RNF -->
                  <div>
-                    <h6 class="text-sm font-bold text-blue-700 flex-1">RNF {{ i + 1 }}: {{ nfr.nfr }}</h6>
+                    <h6 class="text-sm font-bold text-blue-700 flex-1">{{ 'QUESTION.NFR' | translate }} {{ i + 1 }}: {{ nfr.nfr }}</h6>
                     
                     <!-- Botón de Graficar o Actualizar Gráfica según el estado -->
                     <button (click)="goGrafic(nfr.id); $event.stopPropagation()"

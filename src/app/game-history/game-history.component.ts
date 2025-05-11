@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { AnsweredQuestion, GameHistoryInterface } from './interfaces/GameHistoryInterface';
 import { GameDataParamsService } from '../game/params/game-data-params.service';
 import { Router } from '@angular/router';
+import { GraficService } from '../grafic/services/GraficService.service';
 
 @Component({
   selector: 'app-game-history',
@@ -37,7 +38,8 @@ export default class GameHistoryComponent implements OnInit {
     private alertService: AlertService, 
     private loadingService: LoadingService,
     private gameDataParamsService: GameDataParamsService,
-    private router: Router
+    private router: Router,
+    private graficChartService: GraficService
   ) {}
 
   ngOnInit(): void {
@@ -276,7 +278,7 @@ export default class GameHistoryComponent implements OnInit {
 
 
   goResults(game: GameHistoryInterface): void {
-    
+
     this.gameDataParamsService.setGameRoomIdLocalStorage(game.game_room.id.toString());
 
     this.gameDataParamsService.setGameResultLocalStorage(
@@ -286,7 +288,21 @@ export default class GameHistoryComponent implements OnInit {
       })
     );
 
-    this.router.navigate(['/results']);
+    this.graficChartService.getGraficByRoomAndQuestionAndUser(game.game_room.id, 0).subscribe(
+      (response) => {
+
+        if (response.data.length > 0) {
+          const graphedRnfIds = response.data.map((item: any) => item.question_id.toString());
+          this.graficChartService.saveGraphedRnfIds(graphedRnfIds);
+        }
+
+        this.router.navigate(['/results']);
+
+      },
+      (error) => {
+        console.error('Error al obtener la gráfica:', error.message);
+      }
+    );
 
   }
 
