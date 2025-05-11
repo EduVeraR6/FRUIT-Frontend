@@ -12,7 +12,6 @@ import { GraficChartGameModel } from '../interfaces/ApiResponse';
 })
 export class GraficService {
 
-  private apiUrlResults = environment.apiUrl + 'grafic-chart/graficas';
   private apiUrlResultsGraphicsByRoomQuestionUser = environment.apiUrl + 'grafic-chart/getGraficByRoomQuestionUser';
   private apiUrlAddGrafica = environment.apiUrl + 'grafic-chart/add-grafica';
   private apiUrlUpdateGrafica = environment.apiUrl + 'grafic-chart/update-grafica';
@@ -31,9 +30,8 @@ export class GraficService {
 
   }
 
-  
 
-  getGraphics(): Observable<any> {
+  getGraficByRoomAndQuestionAndUser(game_room_id: number, question_id: number, user_id?: number): Observable<any> {
     const userData = this.authService.getUserData();
   
     const headers = new HttpHeaders({
@@ -41,33 +39,7 @@ export class GraficService {
     });
   
     return this.http
-      .get<any>(`${this.apiUrlResults}`, { headers })
-      .pipe(
-        tap((response) => {
-          console.log('SERVICE | Respuesta obtenida:', response);  // Aquí se muestra la respuesta cruda
-          return response;
-        }),
-        catchError((error) => {
-          console.error('SERVICE | Error al obtener gráficos:', error);
-          return throwError(
-            () => new Error(
-              error.error.message || 'SERVICE | Ocurrió un error. Intenta más tarde.'
-            )
-          );
-        })
-      );
-  }
-
-
-  getGraficByRoomAndQuestionAndUser(game_room_id: number, question_id : number): Observable<any> {
-    const userData = this.authService.getUserData();
-  
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${userData?.access_token}`,
-    });
-  
-    return this.http
-      .post<any>(this.apiUrlResultsGraphicsByRoomQuestionUser, {game_room_id, question_id}, { headers })
+      .post<any>(this.apiUrlResultsGraphicsByRoomQuestionUser, { game_room_id, question_id, user_id }, { headers })
       .pipe(
         tap((response) => {
           return response.data;
@@ -141,7 +113,7 @@ export class GraficService {
   //LOCALSTORAGE COMPARTIR IDS RNF GRAFICADOS
 
   // Cargar IDs guardados en localStorage
-  private loadGraphedRnfIds(): void {
+  public loadGraphedRnfIds(): void {
     const savedIds = localStorage.getItem('graphedRnfIds');
     if (savedIds) {
       this.graphedRnfIdsSubject.next(JSON.parse(savedIds));
@@ -149,7 +121,7 @@ export class GraficService {
   }
 
   // Guardar IDs en localStorage
-  private saveGraphedRnfIds(ids: string[]): void {
+  public saveGraphedRnfIds(ids: string[]): void {
     localStorage.setItem('graphedRnfIds', JSON.stringify(ids));
   }
 
@@ -172,21 +144,5 @@ export class GraficService {
       this.saveGraphedRnfIds(newIds);
     }
   }
-
-  // Desmarcar un RNF (si se elimina la gráfica)
-  unmarkRnfAsGraphed(rnfId: string): void {
-    const currentIds = this.getGraphedRnfIds();
-    if (currentIds.includes(rnfId)) {
-      const newIds = currentIds.filter(id => id !== rnfId);
-      this.graphedRnfIdsSubject.next(newIds);
-      this.saveGraphedRnfIds(newIds);
-    }
-  }
-
-
-
-
-
-
 
 }

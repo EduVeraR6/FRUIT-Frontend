@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Chart, ChartConfiguration, ChartType, ChartEvent, LegendItem, LegendElement, ChartTypeRegistry } from 'chart.js';
 import { registerables } from 'chart.js';
 import { ChartDataInput } from '../interfaces/ChartDataInput';
@@ -14,8 +14,7 @@ Chart.register(...registerables);
 })
   
 export class LineChartComponent implements AfterViewInit, OnChanges {
-  @ViewChild('membershipChart')
-  chartCanvas!: ElementRef;
+  @ViewChild('membershipChart') chartCanvas!: ElementRef;
   chart!: Chart;
 
   // Variable para rastrear el estado de filtrado
@@ -23,21 +22,17 @@ export class LineChartComponent implements AfterViewInit, OnChanges {
 
   @Input() chartData: ChartDataInput | undefined;
   @Input() linguisticVariable: string = '';
+  @Output() chartRendered: EventEmitter<HTMLCanvasElement> = new EventEmitter<HTMLCanvasElement>();
 
   constructor() { }
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.createEmptyChart(
-        this.chartData?.xAxisLimit || 1,
-        this.chartData?.yAxisStep || 0.5,
-        this.linguisticVariable
-      );
-    });
+  ngAfterViewInit() {   
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['chartData']) {
+
       setTimeout(() => {
         if (
           changes['chartData'].currentValue &&
@@ -103,6 +98,11 @@ export class LineChartComponent implements AfterViewInit, OnChanges {
           title: {
             display: false,
             text: `Conjunto difuso para la variable lingüística ${linguisticVariable}`
+          }
+        },
+        animation: {
+          onComplete: (e) => {
+            this.chartRendered.emit(this.chartCanvas.nativeElement);
           }
         }
       }
@@ -259,6 +259,11 @@ export class LineChartComponent implements AfterViewInit, OnChanges {
             display: true,
             text: `Conjunto difuso para la variable lingüística ${linguisticVariable}`,
             font: { size: 16 }
+          }
+        },
+        animation: {
+          onComplete: (e) => {
+            this.chartRendered.emit(this.chartCanvas.nativeElement);
           }
         }
       }

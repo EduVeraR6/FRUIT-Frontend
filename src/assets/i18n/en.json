@@ -101,7 +101,8 @@
     "LINGUISTIC_RECOMMENDATION": "Recommendation",
     "OTHER_LINGUISTIC_VALUES": "Other Linguistic Values",
     "VALUES": "Values",
-    "VIEW_ANSWERS": "View Answers"
+    "VIEW_ANSWERS": "View Answers",
+    "CONTINUE_GRAPHIC": "Continue graphic"
   },
   "BUTTON_NAVIGATION_TABLE": {
     "NEXT": "Next",
@@ -179,7 +180,8 @@
     "FEEDBACK": "Feedback: ",
     "BUTTON_CREATE_GRAPH" : "Create Graph",
     "BUTTON_EDIT_GRAPH" : "Edit Graph",
-    "BUTTON_FINISH" : "Finish"
+    "BUTTON_FINISH" : "Finish",
+    "NOT_GRAPHED": "Not graphed"
   },
   "GRAPHIC": {
   "LINGUISTIC_VARIABLE": "Linguistic Variable",

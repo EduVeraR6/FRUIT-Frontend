@@ -17,7 +17,7 @@ import { GraficService } from '../grafic/services/GraficService.service';
 export default class ResultsComponent implements OnInit {
   resultData: ResultsQuestionsResponse | null = null;
   expandedIndex: number | null = null;
-  graphedRnfIds: string[] = [];
+  //graphedRnfIds: string[] = [];
 
 
   constructor(private gameRoomService: GameRoomsService, private gameDataService: GameDataParamsService, private router: Router, private graficService : GraficService) {}
@@ -26,7 +26,7 @@ export default class ResultsComponent implements OnInit {
     const result = this.gameDataService.getGameResult();
 
     // Load graph status from localStorage
-    this.loadGraphedRnfs();
+    this.graficService.loadGraphedRnfIds();
 
     if (result && result.data) {
       this.resultData = result.data;
@@ -59,9 +59,18 @@ export default class ResultsComponent implements OnInit {
     this.gameDataService.clearQuestionIDLocalStorage();
     this.gameDataService.clearQuestionsGameLocalStorage();
     this.gameDataService.clearGameResultLocalStorage();
-    
+   
     // Clear graphed RNFs status
-    localStorage.removeItem('graphedRnfs');
+    localStorage.removeItem('graphedRnfIds');
+
+    // Remove all editMode keys from localStorage
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('editMode_')) {
+        localStorage.removeItem(key);
+        i--;
+      }
+    }
 
     this.router.navigate(['/game'], {
       queryParams: { mode: 'find' }
@@ -101,16 +110,4 @@ export default class ResultsComponent implements OnInit {
     return this.graficService.isRnfGraphed(rnf_id);
   }
 
-
-  private loadGraphedRnfs(): void {
-    const storedGraphedRnfs = localStorage.getItem('graphedRnfs');
-    if (storedGraphedRnfs) {
-      try {
-        this.graphedRnfIds = JSON.parse(storedGraphedRnfs);
-      } catch (e) {
-        console.error('Error parsing graphed RNFs from localStorage:', e);
-        this.graphedRnfIds = [];
-      }
-    }
-  }
 }
