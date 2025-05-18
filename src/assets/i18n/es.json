@@ -178,8 +178,8 @@
     "LINGUISTIC_RECOMMENDATION": "Recomendación lingüística: ",
     "YOUR_ANSWER": "Tu respuesta: ",
     "FEEDBACK": "Retroalimentación: ",
-    "BUTTON_CREATE_GRAPH" : "Crear gráfico",
-    "BUTTON_EDIT_GRAPH" : "Editar gráfico",
+    "BUTTON_CREATE_GRAPH" : "Crear conjunto difuso",
+    "BUTTON_EDIT_GRAPH" : "Editar conjunto difuso",
     "BUTTON_FINISH" : "Finalizar",
     "NOT_GRAPHED": "No graficado"
   },

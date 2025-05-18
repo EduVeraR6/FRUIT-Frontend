@@ -34,7 +34,7 @@
                     
                     <!-- Botón de Graficar o Actualizar Gráfica según el estado -->
                     <button (click)="goGrafic(nfr.id); $event.stopPropagation()"
-                        [ngClass]="isRnfGraphed(nfr.id) ? 'bg-gray-400 hover:bg-gray-700' : 'bg-[#28A745] hover:bg-green-700'"
+                        [ngClass]="isRnfGraphed(nfr.id) ? 'bg-blue-500 hover:bg-blue-700' : 'bg-[#28A745] hover:bg-green-700'"
                         class="text-white px-4 py-2 rounded-lg shadow-md disabled:opacity-50">
                         {{ (isRnfGraphed(nfr.id) ? 'RESULTS.BUTTON_EDIT_GRAPH' : 'RESULTS.BUTTON_CREATE_GRAPH') | translate }}
                     </button>
