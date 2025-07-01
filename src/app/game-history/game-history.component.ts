@@ -338,7 +338,7 @@ export default class GameHistoryComponent implements OnInit {
   isExpiredGame(expiration_date : string): boolean {
     const currentDate = new Date();
     const expirationDate = new Date(expiration_date);
-    return expirationDate >= currentDate;
+    return expirationDate <= currentDate;
   }
 
   goResults(game: GameHistoryInterface): void {

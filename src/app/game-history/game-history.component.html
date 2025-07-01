@@ -210,9 +210,9 @@
                     {{ 'TABLE.VIEW_ANSWERS' | translate }}
                   </button>
 
-                  <button [disabled]="!game.isGraphicMissing && isExpiredGame(game.game_room.expiration_date)"
+                  <button [disabled]="!game.isGraphicMissing || isExpiredGame(game.game_room.expiration_date)"
                     class="px-2 py-1 text-xs font-medium text-white rounded"
-                    [ngClass]="!game.isGraphicMissing && isExpiredGame(game.game_room.expiration_date) ? 'bg-gray-400 text-gray-600 cursor-not-allowed' : 'hover:bg-green-700 focus:outline-none bg-[#28A745]'"
+                    [ngClass]="!game.isGraphicMissing || isExpiredGame(game.game_room.expiration_date) ? 'bg-gray-400 text-gray-600 cursor-not-allowed' : 'hover:bg-green-700 focus:outline-none bg-[#28A745]'"
                     (click)="goResults(game)">
                     {{ 'TABLE.CONTINUE_GRAPHIC' | translate }}
                   </button>
